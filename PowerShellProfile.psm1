@@ -1,4 +1,3 @@
-$PROJECTS_PATH = "C:\Projects"
 $VS_WHERE = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
 $POSH_THEME = ".mytheme.omp.json"
 
@@ -49,7 +48,7 @@ function Enter-DevShell
 
 function Set-PersonalAliases
 {
-    Set-Alias -Name slpe -Value Set-LocationPlutoEngine -Scope Global
+    Set-Alias -Name sltp -Value Set-LocationToProject -Scope Global
     Set-Alias -Name open -Value Invoke-Open -Scope Global
 }
 
@@ -66,16 +65,26 @@ function Invoke-Open([string] $Path)
 }
 Export-ModuleMember Invoke-Open
 
-function Set-LocationPlutoEngine
+function Set-LocationToProject
 {
-    Set-Location "$PROJECTS_PATH\PlutoEngine"
+    param(
+        $Project
+    )
+
+    $Location = $Global:SelectedProfile.projects.$Project
+    Write-Host "Going to: '$Location'`n"
+    Set-Location $Location
 }
-Export-ModuleMember Set-LocationPlutoEngine
+Export-ModuleMember Set-LocationToProject
 
 function Invoke-Main
 {
+    param(
+        $InProfile
+    )
+
     $module = Get-Module PowerShellProfile
-    $moduleDir = Split-Path $module.path -Parent
+    $ModuleDir = $Module.ModuleBase
 
     Set-PoshPrompt -Theme "$moduleDir\$POSH_THEME"
     Set-ListFilesAliases
@@ -87,5 +96,10 @@ function Invoke-Main
     Set-PersonalAliases
 
     Set-Alias -Name open -Value Invoke-Open
+
+    $Module = Get-Module -Name PowerShellProfile
+
+    $ProfileContent = Get-Content "$ModuleDir/profiles/$InProfile.json"
+    $Global:SelectedProfile = $ProfileContent | ConvertFrom-Json
 }
 Export-ModuleMember Invoke-Main
