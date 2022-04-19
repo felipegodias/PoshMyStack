@@ -22,7 +22,7 @@
         {
           "foreground": "lightBlue",
           "style": "plain",
-          "template": "# ",
+          "template": "\n# ",
           "type": "text"
         },
         {

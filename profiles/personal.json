@@ -1,5 +1,26 @@
 {
     "projects": {
-        "nft": "C:/Users/Felipe/Projects/new-frontier-town-unity"
+        "psp": {
+            "name": "Power Shell Profile",
+            "path": "C:/Users/Felipe/Projects/PowerShellProfile"
+        },
+        "pdb": {
+            "name": "Pluto DB",
+            "path": "C:/Users/Felipe/Projects/PlutoDB"
+        },
+        "hr": {
+            "name": "Hacker Rank",
+            "path": "C:/Users/Felipe/Projects/HackerRank"
+        },
+        "nft": {
+            "name": "New Frontier Town Unity",
+            "path": "C:/Users/Felipe/Projects/new-frontier-town-unity"
+        }
+    },
+    "actions": {
+        "test": {
+            "cmd": "cd \"C:/Users/Felipe/Documents\"",
+            "description": ""
+        }
     }
 }

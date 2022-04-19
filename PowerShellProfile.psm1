@@ -49,6 +49,7 @@ function Enter-DevShell
 function Set-PersonalAliases
 {
     Set-Alias -Name sltp -Value Set-LocationToProject -Scope Global
+    Set-Alias -Name ia -Value Invoke-Action -Scope Global
     Set-Alias -Name open -Value Invoke-Open -Scope Global
 }
 
@@ -71,11 +72,48 @@ function Set-LocationToProject
         $Project
     )
 
-    $Location = $Global:SelectedProfile.projects.$Project
-    Write-Host "Going to: '$Location'`n"
+    $Projects = $Global:SelectedProfile.projects
+    $ProjectExists = $Projects.PSObject.Properties.Item($Project)
+    if (-Not $ProjectExists)
+    {
+        Write-Host "Project '$Project' does not exists in the profile! Do you mean one of these?"
+        foreach ($Key in $Projects.PSObject.Properties) {
+            $KeyName = $Key.Name
+            $ProjectName = $Projects.$KeyName.name
+            "{0,-4} => {1}" -f $KeyName, $ProjectName
+        }
+        return
+    }
+
+    $Location = $Projects.$Project.path
+    Write-Host "Going to: '$Location'"
     Set-Location $Location
 }
 Export-ModuleMember Set-LocationToProject
+
+function Invoke-Action
+{
+    param(
+        $Action
+    )
+
+    $Actions = $Global:SelectedProfile.actions
+    $ActionsExists = $Actions.PSObject.Properties.Item($Action)
+    if (-Not $ActionsExists)
+    {
+        Write-Host "Action '$Action' does not exists in the profile! Do you mean one of these?"
+        foreach ($Key in $Actions.PSObject.Properties) {
+            $KeyName = $Key.Name
+            $ActionDescription = $Actions.$KeyName.name
+            "{0,-4} => {1}" -f $KeyName, $ActionDescription
+        }
+        return
+    }
+
+    $Cmd = $Actions.$Action.cmd
+    Invoke-Expression $Cmd
+}
+Export-ModuleMember Invoke-Action
 
 function Invoke-Main
 {
