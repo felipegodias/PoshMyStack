@@ -73,15 +73,20 @@ function Set-LocationToProject
     )
 
     $Projects = $Global:SelectedProfile.projects
-    $ProjectExists = $Projects.PSObject.Properties.Item($Project)
-    if (-Not $ProjectExists)
+    $ProjectExists = $Project -NE $null -AND $Projects.PSObject.Properties.Item($Project)
+    if (-NOT $ProjectExists)
     {
         Write-Host "Project '$Project' does not exists in the profile! Do you mean one of these?"
+        $Table = @()
         foreach ($Key in $Projects.PSObject.Properties) {
             $KeyName = $Key.Name
             $ProjectName = $Projects.$KeyName.name
-            "{0,-4} => {1}" -f $KeyName, $ProjectName
+            $Row = "" | Select Alias,Name
+            $Row.Alias = $KeyName
+            $Row.Name = $ProjectName
+            $Table += $Row
         }
+        $Table
         return
     }
 
@@ -98,20 +103,38 @@ function Invoke-Action
     )
 
     $Actions = $Global:SelectedProfile.actions
-    $ActionsExists = $Actions.PSObject.Properties.Item($Action)
-    if (-Not $ActionsExists)
+    
+    $ActionsExists = $Action -NE $null -AND $Actions.PSObject.Properties.Item($Action)
+    if (-NOT $ActionsExists)
     {
         Write-Host "Action '$Action' does not exists in the profile! Do you mean one of these?"
+        $Table = @()
         foreach ($Key in $Actions.PSObject.Properties) {
             $KeyName = $Key.Name
-            $ActionDescription = $Actions.$KeyName.name
-            "{0,-4} => {1}" -f $KeyName, $ActionDescription
+            $ActionDescription = $Actions.$KeyName.description
+            $Row = "" | Select Action,Description
+            $Row.Action = $KeyName
+            $Row.Description = $ActionDescription
+            $Table += $Row
         }
+        $Table
         return
     }
 
     $Cmd = $Actions.$Action.cmd
+    $WdExists = $Actions.$Action.PSObject.Properties.Item("wd")
+    $Cwd = Get-Location
+    if ($WdExists)
+    {
+        Set-Location $Actions.$Action.wd
+    }
+
     Invoke-Expression $Cmd
+
+    if ($WdExists)
+    {
+        Set-Location $Cwd
+    }
 }
 Export-ModuleMember Invoke-Action
 
