@@ -19,7 +19,8 @@
     },
     "actions": {
         "test": {
-            "cmd": "cd \"C:/Users/Felipe/Documents\"",
+            "cmd": "devenv .",
+            "wd": "C:/Users/Felipe/Projects/HackerRank",
             "description": ""
         }
     }
