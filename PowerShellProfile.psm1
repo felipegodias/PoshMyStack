@@ -36,6 +36,12 @@ function Start-Cmd($cmd, $arguments)
 
 function Enter-DevShell
 {
+    $VsWhereExists = Test-Path -Path $VS_WHERE -PathType Leaf
+    if (-NOT $VsWhereExists)
+    {
+        return
+    }
+
     $vsInstanceId = Start-Cmd $VS_WHERE "-latest -property instanceId"
     $vsInstallPath = Start-Cmd $VS_WHERE "-latest -property installationPath"
 
@@ -48,7 +54,7 @@ function Enter-DevShell
 
 function Set-PersonalAliases
 {
-    Set-Alias -Name sltp -Value Set-LocationToProject -Scope Global
+    Set-Alias -Name slp -Value Set-LocationToProject -Scope Global
     Set-Alias -Name ia -Value Invoke-Action -Scope Global
     Set-Alias -Name open -Value Invoke-Open -Scope Global
 }
@@ -73,7 +79,7 @@ function Set-LocationToProject
     )
 
     $Projects = $Global:SelectedProfile.projects
-    $ProjectExists = $Project -NE $null -AND $Projects.PSObject.Properties.Item($Project)
+    $ProjectExists = $null -NE $Project -AND $Projects.PSObject.Properties.Item($Project)
     if (-NOT $ProjectExists)
     {
         Write-Host "Project '$Project' does not exists in the profile! Do you mean one of these?"
@@ -81,7 +87,7 @@ function Set-LocationToProject
         foreach ($Key in $Projects.PSObject.Properties) {
             $KeyName = $Key.Name
             $ProjectName = $Projects.$KeyName.name
-            $Row = "" | Select Alias,Name
+            $Row = "" | Select-Object Alias,Name
             $Row.Alias = $KeyName
             $Row.Name = $ProjectName
             $Table += $Row
@@ -104,7 +110,7 @@ function Invoke-Action
 
     $Actions = $Global:SelectedProfile.actions
     
-    $ActionsExists = $Action -NE $null -AND $Actions.PSObject.Properties.Item($Action)
+    $ActionsExists = $null -NE $Action -AND $Actions.PSObject.Properties.Item($Action)
     if (-NOT $ActionsExists)
     {
         Write-Host "Action '$Action' does not exists in the profile! Do you mean one of these?"
@@ -112,7 +118,7 @@ function Invoke-Action
         foreach ($Key in $Actions.PSObject.Properties) {
             $KeyName = $Key.Name
             $ActionDescription = $Actions.$KeyName.description
-            $Row = "" | Select Action,Description
+            $Row = "" | Select-Object Action,Description
             $Row.Action = $KeyName
             $Row.Description = $ActionDescription
             $Table += $Row
@@ -138,6 +144,10 @@ function Invoke-Action
 }
 Export-ModuleMember Invoke-Action
 
+#Set-ExecutionPolicy Bypass -Scope Process -Force;
+#Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://ohmyposh.dev/install.ps1'))
+#Install-Module -Name Get-ChildItemColor -AllowClobber -Scope CurrentUser
+
 function Invoke-Main
 {
     param(
@@ -147,7 +157,8 @@ function Invoke-Main
     $module = Get-Module PowerShellProfile
     $ModuleDir = $Module.ModuleBase
 
-    Set-PoshPrompt -Theme "$moduleDir\$POSH_THEME"
+    oh-my-posh prompt init pwsh --config "$moduleDir\$POSH_THEME" | Invoke-Expression
+    
     Set-ListFilesAliases
     
     Set-NavigableMenu
@@ -158,9 +169,7 @@ function Invoke-Main
 
     Set-Alias -Name open -Value Invoke-Open
 
-    $Module = Get-Module -Name PowerShellProfile
-
-    $ProfileContent = Get-Content "$ModuleDir/profiles/$InProfile.json"
+    $ProfileContent = Get-Content $InProfile
     $Global:SelectedProfile = $ProfileContent | ConvertFrom-Json
 }
 Export-ModuleMember Invoke-Main
