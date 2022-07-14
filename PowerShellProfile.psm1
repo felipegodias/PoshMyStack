@@ -3,7 +3,7 @@ $POSH_THEME = ".mytheme.omp.json"
 
 function Set-ListFilesAliases
 {
-    Import-Module Get-ChildItemColor
+    Import-Module Get-ChildItemColor -Global
         
     Set-Alias -Name l -Value Get-ChildItem -Option AllScope -Scope Global
     Set-Alias -Name ls -Value Get-ChildItemColorFormatWide -Option AllScope -Scope Global
@@ -158,7 +158,7 @@ function Invoke-Main
     $ModuleDir = $Module.ModuleBase
 
     oh-my-posh prompt init pwsh --config "$moduleDir\$POSH_THEME" | Invoke-Expression
-    
+
     Set-ListFilesAliases
     
     Set-NavigableMenu
@@ -171,5 +171,7 @@ function Invoke-Main
 
     $ProfileContent = Get-Content $InProfile
     $Global:SelectedProfile = $ProfileContent | ConvertFrom-Json
+
+    Import-Module posh-git -Global
 }
 Export-ModuleMember Invoke-Main
