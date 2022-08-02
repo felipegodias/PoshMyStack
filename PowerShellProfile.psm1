@@ -78,7 +78,10 @@ function Set-LocationToProject
         $Project
     )
 
-    $Projects = $Global:SelectedProfile.projects
+    $ProfileContent = Get-Content $Global:InProfile
+    $SelectedProfile = $ProfileContent | ConvertFrom-Json
+
+    $Projects = $SelectedProfile.projects
     $ProjectExists = $null -NE $Project -AND $Projects.PSObject.Properties.Item($Project)
     if (-NOT $ProjectExists)
     {
@@ -108,7 +111,10 @@ function Invoke-Action
         $Action
     )
 
-    $Actions = $Global:SelectedProfile.actions
+    $ProfileContent = Get-Content $Global:InProfile
+    $SelectedProfile = $ProfileContent | ConvertFrom-Json
+
+    $Actions = $SelectedProfile.actions
     
     $ActionsExists = $null -NE $Action -AND $Actions.PSObject.Properties.Item($Action)
     if (-NOT $ActionsExists)
@@ -144,10 +150,6 @@ function Invoke-Action
 }
 Export-ModuleMember Invoke-Action
 
-#Set-ExecutionPolicy Bypass -Scope Process -Force;
-#Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://ohmyposh.dev/install.ps1'))
-#Install-Module -Name Get-ChildItemColor -AllowClobber -Scope CurrentUser
-
 function Invoke-Main
 {
     param(
@@ -169,8 +171,7 @@ function Invoke-Main
 
     Set-Alias -Name open -Value Invoke-Open
 
-    $ProfileContent = Get-Content $InProfile
-    $Global:SelectedProfile = $ProfileContent | ConvertFrom-Json
+    $Global:InProfile = $InProfile
 
     Import-Module posh-git -Global
 }
