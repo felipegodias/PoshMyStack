@@ -1,10 +1,18 @@
-# PowerShellProfile
+<div align="center">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/af/PowerShell_Core_6.0_icon.png?20180119125925" alt="Logo" width="128" height="130"/>
+    <h1 align="center">PowerShell Profile</h1>
+</div>
 
-#winget install JanDeDobbeleer.OhMyPosh
-#Set-ExecutionPolicy Bypass -Scope Process -Force
-#Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
-#Install-Module posh-git -Scope CurrentUser -Force
-#Install-Module -Name Get-ChildItemColor -AllowClobber -Scope CurrentUser
+## Requirements
+* PowerShell 7.x
+```powershell
+winget install Microsoft.PowerShell
+```
 
-#Import-Module E:\Projects\PowerShellProfile
-#Invoke-Main E:\Projects\PowerShellProfile\profiles\personal.json
+## Install
+```powershell
+git clone git@github.com:felipegodias/PowerShellProfile.git
+cd PowerShellProfile
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
+./Install.ps1
+```
