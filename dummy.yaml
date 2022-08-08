@@ -1,0 +1,21 @@
+---
+pipelines:
+  tc:
+    description: "Test command."
+    steps:
+      - command: "Write-Host HelloWorld"
+  tmc:
+    description: "Test multiple commands."
+    steps:
+      - command: "Write-Host First"
+      - command: "Write-Host Second"
+  twd:
+    description: "Test running from given working directory."
+    working_directory: "C:/"
+    steps:
+      - command: "Get-Location"
+  tcwd:
+    description: "Test running from given working directory."
+    steps:
+      - command: "Get-Location"
+        working_directory: "C:/"
