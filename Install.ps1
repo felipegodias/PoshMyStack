@@ -26,4 +26,3 @@ $CurrentLocation = $CurrentLocation.path
 
 New-Item -Path $profile -ItemType File -Force
 Add-Content -Path $profile -Value "Import-Module $CurrentLocation"
-Add-Content -Path $profile -Value "Invoke-Main $CurrentLocation/dummy.yaml"
